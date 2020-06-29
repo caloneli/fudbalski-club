@@ -1,0 +1,607 @@
+---------
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace WindowsFormsApplication3
+{    public partial class Form1 : Form
+    {
+        public Form1()
+        {
+            InitializeComponent();
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+
+        }
+
+        private void unosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+          Form nova = new Gradovi();
+          nova.Show();
+
+        }
+
+        private void krajRadaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void spisakIgracaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form nova = new SpisakIgraca();
+            nova.Show();
+        }
+
+        private void spisakStadionaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form nova = new KapacitetStadiona();
+            nova.Show();
+        }
+
+        private void unosToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            Form nova = new Stadioni();
+            nova.Show();
+        }
+    }
+}
+------
+UNOS GRADOVA
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApplication3
+{
+    public partial class Gradovi : Form
+    {
+        public Gradovi()
+        {
+            InitializeComponent();
+        }
+
+        string a = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=05-06-FUDBAL;Integrated Security=True";
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Gradovi_Load(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select * from grad order by gradid";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                    textBox1.Text = Convert.ToString(rdr["gradid"]);
+                    textBox2.Text = Convert.ToString(rdr["grad"]);
+                    textBox3.Text = Convert.ToString(rdr["PozivniBroj"]);
+                    textBox4.Text = Convert.ToString(rdr["PostanskiBroj"]);
+                    textBox5.Text = Convert.ToString(rdr["BrojStanovnika"]);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string p1;
+            if (textBox1.Text == "") p1 = "9999999999"; else p1 = textBox1.Text;
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select top 1 * from grad where gradid < " + p1 + " order by gradid desc";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                    textBox1.Text = Convert.ToString(rdr["gradid"]);
+                    textBox2.Text = Convert.ToString(rdr["grad"]);
+                    textBox3.Text = Convert.ToString(rdr["PozivniBroj"]);
+                    textBox4.Text = Convert.ToString(rdr["PostanskiBroj"]);
+                    textBox5.Text = Convert.ToString(rdr["BrojStanovnika"]);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
+            textBox5.Clear();
+            textBox1.Focus();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string p1;
+            if (textBox1.Text == "") p1 = "0"; else p1 = textBox1.Text;
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select top 1 * from grad where gradid > " + p1 + " order by gradid asc";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                    textBox1.Text = Convert.ToString(rdr["gradid"]);
+                    textBox2.Text = Convert.ToString(rdr["grad"]);
+                    textBox3.Text = Convert.ToString(rdr["PozivniBroj"]);
+                    textBox4.Text = Convert.ToString(rdr["PostanskiBroj"]);
+                    textBox5.Text = Convert.ToString(rdr["BrojStanovnika"]);
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "insert into grad values (@gradid, @grad, @PostanskiBroj, @PozivniBroj, @BrojStanovnika);";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            if (textBox1.Text == String.Empty) kom.Parameters.AddWithValue("gradid", DBNull.Value);
+            else kom.Parameters.AddWithValue("gradid", Convert.ToInt32(textBox1.Text));
+            if (textBox2.Text == String.Empty) kom.Parameters.AddWithValue("grad", DBNull.Value);
+            else kom.Parameters.AddWithValue("grad", textBox2.Text);
+            if (textBox3.Text == String.Empty) kom.Parameters.AddWithValue("PostanskiBroj", DBNull.Value);
+            else kom.Parameters.AddWithValue("PostanskiBroj", textBox3.Text);
+            if (textBox4.Text == String.Empty) kom.Parameters.AddWithValue("POzivniBroj", DBNull.Value);
+            else kom.Parameters.AddWithValue("PozivniBroj", Convert.ToInt32(textBox4.Text));
+            if (textBox5.Text == String.Empty) kom.Parameters.AddWithValue("BrojStanovnika", DBNull.Value);
+            else kom.Parameters.AddWithValue("BrojStanovnika", Convert.ToInt32(textBox5.Text));
+            try
+            {
+                kon.Open();
+                int rez = kom.ExecuteNonQuery();
+                if (rez == 1)
+                {
+                    MessageBox.Show("uspesno dodat");
+                    textBox1.Text = String.Empty;
+                    textBox2.Text = String.Empty;
+                    textBox3.Text = String.Empty;
+                    textBox4.Text = String.Empty;
+                    textBox5.Text = String.Empty;
+                    textBox1.Focus();
+                }
+                else MessageBox.Show("greska dodavanja");
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (kon != null) kon.Close();
+            }
+        }
+    }
+}
+-----------
+SPISAK IGRACA
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApplication3
+{
+    public partial class SpisakIgraca : Form
+    {
+        public SpisakIgraca()
+        {
+            InitializeComponent();
+        }
+
+        string a = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=05-06-FUDBAL;Integrated Security=True";
+
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void SpisakIgraca_Load(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select * from grad order by grad asc";
+            SqlCommand kom = new SqlCommand(upit, kon);
+
+            try
+            {
+                kon.Open();
+
+                DataTable dt = new DataTable();
+                dt.Load(kom.ExecuteReader());
+                comboBox1.DataSource = dt;
+                comboBox1.DisplayMember = "grad";
+                comboBox1.ValueMember = "gradid";
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "Select i.ime, i.prezime, k.nazivKluba " + 
+                          " from igrac i, klub k, grad g, pozicijaIgraca p " +
+                          " where i.klubID = k.klubID and k.gradID = g.gradID and " + 
+                          " i.pozicijaID = p.pozicijaID and " +
+                          " g.grad=@grad and p.naziv = @pozicija " +
+                          " order by i.ime ASC , i.prezime ASC, k.nazivKluba DESC;";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            if (comboBox1.Text == "") kom.Parameters.AddWithValue("grad", DBNull.Value);
+            else kom.Parameters.AddWithValue("grad", comboBox1.Text);
+            if (textBox1.Text == "") kom.Parameters.AddWithValue("pozicija", DBNull.Value);
+            else kom.Parameters.AddWithValue("pozicija", textBox1.Text);
+
+            try
+            {
+                kon.Open();
+
+                DataTable dt = new DataTable();
+                dt.Load(kom.ExecuteReader());
+                dataGridView1.DataSource = dt;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (kon != null) kon.Close();
+            }
+        }
+    }
+}
+-------
+UNOS STADIONA
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApplication3
+{
+    public partial class Stadioni : Form
+    {
+        public Stadioni()
+        {
+            InitializeComponent();
+        }
+
+        string a = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=05-06-FUDBAL;Integrated Security=True";
+
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void Stadioni_Load(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+           string upit = "select * from grad order by grad asc";
+           SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+                DataTable dt = new DataTable();
+                dt.Load(kom.ExecuteReader());
+                comboBox1.DataSource = dt;
+                comboBox1.DisplayMember = "grad";
+                comboBox1.ValueMember = "gradid";
+
+                upit = "select * from stadion order by stadionid asc";
+                kom = new SqlCommand(upit, kon);
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                   textBox1.Text = Convert.ToString(rdr["StadionId"]);
+                   textBox2.Text = Convert.ToString(rdr["Naziv"]);
+                   textBox3.Text = Convert.ToString(rdr["Adresa"]);
+                   textBox4.Text = Convert.ToString(rdr["Kapacitet"]);
+                   textBox5.Text = Convert.ToString(rdr["BrojUlaza"]);
+
+                   if (rdr["Gradid"] == DBNull.Value) comboBox1.Text = "";
+                   else comboBox1.SelectedValue = (Convert.ToString(rdr["Gradid"]));
+                 }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+
+            finally
+            {
+               if (rdr != null) rdr.Close();
+               if (kon != null) kon.Close();
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            textBox1.Clear();
+            textBox2.Clear();
+            textBox3.Clear();
+            textBox4.Clear();
+            textBox5.Clear();
+            comboBox1.Text = "";
+            textBox1.Focus();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            string p1;
+            if (textBox1.Text == "") p1 = "9999999999"; else p1 = textBox1.Text;
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select top 1 * from stadion where stadionid < " + p1 + " order by stadionid desc";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                    textBox1.Text = Convert.ToString(rdr["StadionId"]);
+                    textBox2.Text = Convert.ToString(rdr["Naziv"]);
+                    textBox3.Text = Convert.ToString(rdr["Adresa"]);
+                    textBox4.Text = Convert.ToString(rdr["Kapacitet"]);
+                    textBox5.Text = Convert.ToString(rdr["BrojUlaza"]);
+
+                    if (rdr["Gradid"] == DBNull.Value) comboBox1.Text = "";
+                    else comboBox1.SelectedValue = (Convert.ToString(rdr["Gradid"]));
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            string p1;
+            if (textBox1.Text == "") p1 = "0"; else p1 = textBox1.Text;
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "select top 1 * from stadion where stadionid > " + p1 + " order by stadionid asc";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            SqlDataReader rdr = null;
+
+            try
+            {
+                kon.Open();
+
+                rdr = kom.ExecuteReader();
+                if (rdr.Read())
+                {
+                    textBox1.Text = Convert.ToString(rdr["StadionId"]);
+                    textBox2.Text = Convert.ToString(rdr["Naziv"]);
+                    textBox3.Text = Convert.ToString(rdr["Adresa"]);
+                    textBox4.Text = Convert.ToString(rdr["Kapacitet"]);
+                    textBox5.Text = Convert.ToString(rdr["BrojUlaza"]);
+
+                    if (rdr["Gradid"] == DBNull.Value) comboBox1.Text = "";
+                    else comboBox1.SelectedValue = (Convert.ToString(rdr["Gradid"]));
+                }
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (rdr != null) rdr.Close();
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = "insert into stadion values (@stadionid, @naziv, @adresa,@kapacitet, @brojUlaza, @gradid);";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            if (textBox1.Text == String.Empty) kom.Parameters.AddWithValue("stadionid", DBNull.Value);
+            else kom.Parameters.AddWithValue("stadionid", Convert.ToInt32(textBox1.Text));
+            if (textBox2.Text == String.Empty) kom.Parameters.AddWithValue("naziv", DBNull.Value);
+            else kom.Parameters.AddWithValue("naziv", textBox2.Text);
+            if (textBox3.Text == String.Empty) kom.Parameters.AddWithValue("adresa", DBNull.Value);
+            else kom.Parameters.AddWithValue("adresa", textBox3.Text);
+            if (textBox4.Text == String.Empty) kom.Parameters.AddWithValue("kapacitet", DBNull.Value);
+            else kom.Parameters.AddWithValue("kapacitet", Convert.ToInt32(textBox4.Text));
+            if (textBox5.Text == String.Empty) kom.Parameters.AddWithValue("brojUlaza", DBNull.Value);
+            else kom.Parameters.AddWithValue("brojUlaza", Convert.ToInt32(textBox5.Text));
+
+            int id = (int)comboBox1.SelectedValue;
+
+            if (comboBox1.Text == String.Empty) kom.Parameters.AddWithValue("gradid", DBNull.Value);
+            else kom.Parameters.AddWithValue("gradid", id);
+
+            try
+            {
+                kon.Open();
+                int rez = kom.ExecuteNonQuery();
+                if (rez == 1)
+                {
+                    MessageBox.Show("uspesno dodat");
+                    textBox1.Text = String.Empty;
+                    textBox2.Text = String.Empty;
+                    textBox3.Text = String.Empty;
+                    textBox4.Text = String.Empty;
+                    textBox5.Text = String.Empty;
+                    comboBox1.Text = String.Empty;
+
+                    textBox1.Focus();
+                }
+                else MessageBox.Show("greska dodavanja");
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (kon != null) kon.Close();
+            }
+        }
+    }
+}
+-------
+SPISAK STADIONA
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+
+namespace WindowsFormsApplication3
+{
+    public partial class KapacitetStadiona : Form
+    {
+        public KapacitetStadiona()
+        {
+            InitializeComponent();
+        }
+
+        string a = "Data Source=localhost\\SQLEXPRESS;Initial Catalog=05-06-FUDBAL;Integrated Security=True";
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SqlConnection kon = new SqlConnection(a);
+            string upit = " Select s.naziv, k.nazivKluba, k.sajt, s.kapacitet, s.brojUlaza " +
+                          " from  klub k, stadion s " +
+                          " where k.stadionID = s.stadionID and s.kapacitet > @kapacitet " +
+                          " order by s.kapacitet ASC , s.brojUlaza DESC; ";
+            SqlCommand kom = new SqlCommand(upit, kon);
+            if (textBox1.Text == "") kom.Parameters.AddWithValue("kapacitet", 0);
+            else kom.Parameters.AddWithValue("kapacitet", textBox1.Text);
+
+            try
+            {
+                kon.Open();
+
+                DataTable dt = new DataTable();
+                dt.Load(kom.ExecuteReader());
+                dataGridView1.DataSource = dt;
+            }
+            catch (SqlException ex)
+            {
+                MessageBox.Show(ex.Message + " " + ex.Number);
+            }
+            finally
+            {
+                if (kon != null) kon.Close();
+            }
+        }
+
+        private void KapacitetStadiona_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}

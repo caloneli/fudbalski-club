@@ -1,0 +1,204 @@
+Create table PozicijaIgraca (
+PozicijaID int,
+Naziv nvarchar(20),
+Opis nvarchar(30)
+constraint  pk_PozicijaIgraca primary key (PozicijaID)
+);
+ 
+Create table Grad (
+GradID int,
+Grad nvarchar(20),
+PozivniBroj nvarchar(3),
+PostanskiBroj int,
+BrojStanovnika int,
+constraint pk_Grad primary key (GradID),
+constraint chk_Grad_PostanskiBroj check (PostanskiBroj > 0),
+constraint chk_Grad_BrojStanovnika check (BrojStanovnika > 0),
+);
+
+Create table Stadion (
+StadionID int,
+Naziv nvarchar(40),
+Adresa nvarchar(30),
+Kapacitet int,
+BrojUlaza int,
+GradID int,
+constraint  pk_Stadion primary key (StadionID),
+constraint chk_Stadion check (Kapacitet > 0 and  BrojUlaza > 0),
+constraint fk_Stadion_Grad foreign key (GradID)
+     references Grad (GradID)
+);
+
+Create table Klub (
+KlubID int,
+NazivKluba nvarchar(50),
+Adresa nvarchar(30),
+GradID int,
+Telefon nvarchar(20),
+Email  nvarchar(50),
+Sajt nvarchar(50),
+ZiroRacun nvarchar(60),
+Boje nvarchar(60),
+StadionID int,
+constraint  pk_Klub primary key (KlubID),
+constraint fk_Klub_Grad foreign key (GradID)
+     references Grad (GradID),
+constraint fk_Klub_Stadion foreign key (StadionID)
+     references Stadion (StadionID),
+);
+
+Create table Igrac (
+IgracID int,
+KlubID int,
+Ime nvarchar(30),
+Prezime nvarchar(30),
+DatumRodjenja smalldatetime,
+PozicijaID int,
+Email  nvarchar(50),
+Telefon nvarchar(20),
+constraint  pk_Igrac primary key (IgracID),
+constraint fk_Igrac_Klub foreign key (KlubID)
+     references Klub (KlubID),
+constraint fk_Igrac_Pozicija foreign key (PozicijaID)
+     references PozicijaIgraca (PozicijaID),
+);
+Create table PozicijaIgraca (
+PozicijaID int,
+Naziv nvarchar(20),
+Opis nvarchar(30)
+constraint  pk_PozicijaIgraca primary key (PozicijaID)
+);
+
+Create table Grad (
+GradID int,
+Grad nvarchar(20),
+PozivniBroj nvarchar(3),
+PostanskiBroj int,
+BrojStanovnika int,
+constraint pk_Grad primary key (GradID),
+constraint chk_Grad_PostanskiBroj check (PostanskiBroj > 0),
+constraint chk_Grad_BrojStanovnika check (BrojStanovnika > 0),
+);
+
+Create table Stadion (
+StadionID int,
+Naziv nvarchar(40),
+Adresa nvarchar(30),
+Kapacitet int,
+BrojUlaza int,
+GradID int,
+constraint  pk_Stadion primary key (StadionID),
+constraint chk_Stadion check (Kapacitet > 0 and  BrojUlaza > 0),
+constraint fk_Stadion_Grad foreign key (GradID)
+     references Grad (GradID)
+);
+
+Create table Klub (
+KlubID int,
+NazivKluba nvarchar(50),
+Adresa nvarchar(30),
+GradID int,
+Telefon nvarchar(20),
+Email  nvarchar(50),
+Sajt nvarchar(50),
+ZiroRacun nvarchar(60),
+Boje nvarchar(60),
+StadionID int,
+constraint  pk_Klub primary key (KlubID),
+constraint fk_Klub_Grad foreign key (GradID)
+     references Grad (GradID),
+constraint fk_Klub_Stadion foreign key (StadionID)
+     references Stadion (StadionID),
+);
+
+Create table Igrac (
+IgracID int,
+KlubID int,
+Ime nvarchar(30),
+Prezime nvarchar(30),
+DatumRodjenja smalldatetime,
+PozicijaID int,
+Email  nvarchar(50),
+Telefon nvarchar(20),
+constraint  pk_Igrac primary key (IgracID),
+constraint fk_Igrac_Klub foreign key (KlubID)
+     references Klub (KlubID),
+constraint fk_Igrac_Pozicija foreign key (PozicijaID)
+     references PozicijaIgraca (PozicijaID),
+);
+
+
+
+PUNJENJE
+
+
+insert into PozicijaIgraca values (1, 'levo krilo', Null);
+insert into PozicijaIgraca values (2, 'centarfor', Null);
+insert into PozicijaIgraca values (3, 'ofanzivni vezni', Null);
+insert into PozicijaIgraca values (4, 'centralni vezni', Null);
+insert into PozicijaIgraca values (5, 'golman', Null);
+
+insert into Grad values (1, 'Beograd', '011', 11000, 1823451);
+insert into Grad values (2, 'Nis', '018', 18000, 270515);
+insert into Grad values (3, 'Novi Sad', '021', 21000, 362258);
+
+insert into Stadion values (1, 'Rajko Mitic', 'Ljutice Bogdana 1a', 55538, 50, 1);
+insert into Stadion values (2, 'JNA', 'Humska 1', 32710, 30, 1);
+insert into Stadion values (3, 'Cair', '9. brigade', 19000, 30, 2);
+insert into Stadion values (4, 'Karaburma', 'Mije Kovacevica 10a, 19000, 14, 3); 
+
+insert into Klub values (1, 'Partizan', Null, 1, Null, Null, 'www.partizan.rs', Null, 'crna, bela', 2);
+insert into Klub values (2, 'Crvena zvezda', Null, 1, Null, Null, 'www.crvenazvezdafk.com', Null, 'crvena, bela', 1);
+insert into Klub values (3, 'Radnicki Nis', Null, 2, Null, Null, 'www.radnickinis.rs', Null, 'crvena, bela, plava', 3);
+insert into Klub values (4, 'OFK Beograd', Null, 1, Null, Null, 'www.ofkbeograd.co.rs', Null, 'rojal plava, bela', 4);
+
+insert into Igrac values (1, 1, 'Andrija', 'Zivkovic', Null, 1, Null, Null);
+insert into Igrac values (2, 2, 'Marko', 'Grujic', Null, 3, Null, Null);
+insert into Igrac values (3, 1, 'Abubakar', 'Oumaru', Null, 2, Null, Null);
+insert into Igrac values (4, 1, 'Zivko', 'Zivkovic', Null, 5, Null, Null);
+insert into Igrac values (5, 2, 'Sasa', 'Ivic', Null, 4, Null, Null);
+insert into Igrac values (6, 2, 'Predrag', 'Rajkovic', Null, 5, Null, Null);
+insert into Igrac values (7, 3, 'Aleksandar', 'Jovanovic', Null, 5, Null, Null);
+insert into Igrac values (8, 2, 'Hugo', 'Vieira', Null, 3, Null, Null);
+insert into Igrac values (9, 4, 'Stefan', 'Cupic', Null, 5, Null, Null);
+
+
+
+RAD ZA BODOVE
+
+
+
+
+create table gost(
+gostid int,
+constraint pk_gost primarykey (gostid),
+)
+
+create table domacin(
+domacinid int,
+constraint pk_domaci nprimarykey (domacinid),
+)
+
+altertable klub add domacinid int
+
+altertable klub add gostid int
+
+create table utakmica(
+utakmicaid int,
+datum smalldatetime,
+vreme int,
+domacinid int,
+gostid int,
+takmicenjeid int,
+crveniKarton nvarchar(30),
+zutiKarton nvarchar(30),
+fauli int,
+constraint pk_utakmica primarykey (utakmicaid),
+constraint fk_utakmica_takmicenje foreignkey (takmicenjeid)
+	references takmicenje(takmicenjeid),
+constraint fk_utakmica_gost foreignkey (gostid)
+	references klub(gostid),
+constraint fk_utakmica_domacin foreignkey (domacinid)
+	references klub(domacinid),
+	)
+
